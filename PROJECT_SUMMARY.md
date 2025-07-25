@@ -1,6 +1,7 @@
-# EKS Terraform Infrastructure
+# EKS Terraform 프로젝트 작업 내역
 
-이 프로젝트는 AWS EKS 클러스터를 Terraform으로 구성하는 Infrastructure as Code입니다.
+## 프로젝트 개요
+AWS EKS 클러스터를 Terraform으로 구성하는 Infrastructure as Code 프로젝트
 
 ## 구성된 리소스
 
@@ -66,39 +67,6 @@ eks-terraform/
 - **정책**: Route53 권한 (사용자 정의)
 - **서비스 계정**: external-dns
 
-## 사용법
-
-1. **AWS CLI 설정**
-   ```bash
-   aws configure
-   ```
-
-2. **Terraform 초기화**
-   ```bash
-   terraform init
-   ```
-
-3. **계획 확인**
-   ```bash
-   terraform plan
-   ```
-
-4. **배포**
-   ```bash
-   terraform apply
-   ```
-
-5. **kubectl 구성**
-   ```bash
-   aws eks --region ap-northeast-1 update-kubeconfig --name devsecops-eks
-   ```
-
-## 정리
-
-```bash
-terraform destroy
-```
-
 ## 주요 출력 값
 - `cluster_endpoint`: EKS 클러스터 엔드포인트
 - `cluster_name`: 클러스터 이름
@@ -106,8 +74,38 @@ terraform destroy
 - `oidc_provider_arn`: OIDC 프로바이더 ARN
 - `configure_kubectl`: kubectl 구성 명령어
 
-## 주의사항
+## 사용 방법
 
-- 이 구성은 AWS 리소스를 생성하므로 비용이 발생할 수 있습니다
-- 사용 후 반드시 `terraform destroy`로 리소스를 정리하세요
+1. **초기화**
+   ```bash
+   terraform init
+   ```
+
+2. **계획 확인**
+   ```bash
+   terraform plan
+   ```
+
+3. **배포**
+   ```bash
+   terraform apply
+   ```
+
+4. **kubectl 구성**
+   ```bash
+   aws eks --region ap-northeast-1 update-kubeconfig --name devsecops-eks
+   ```
+
+5. **정리**
+   ```bash
+   terraform destroy
+   ```
+
+## GitHub 저장소
+- **URL**: https://github.com/Jiwon-sim/eks-terraform.git
+- **브랜치**: main
+
+## 주의사항
+- AWS 리소스 생성으로 인한 비용 발생
+- 사용 후 반드시 리소스 정리 필요
 - IAM 권한 확인 필요
