@@ -16,7 +16,7 @@
 - **클러스터명**: devsecops-eks
 - **Kubernetes 버전**: 1.28
 - **노드 그룹**: 
-  - 인스턴스 타입: t3.micro
+  - 인스턴스 타입: t3.small
   - 최소: 1개, 최대: 3개, 희망: 2개
 
 ### 3. Kubernetes Add-ons
