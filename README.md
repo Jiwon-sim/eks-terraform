@@ -17,6 +17,7 @@ eks-terraform/
 └── README.md                
 ```
 **목표**
+
 ✅ **완전한 Kubernetes 클러스터** (EKS)  
 ✅ **자동 로드밸런싱** (AWS Load Balancer Controller)  
 ✅ **자동 스토리지 관리** (EBS CSI Driver)  
