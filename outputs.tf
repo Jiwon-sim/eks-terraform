@@ -32,3 +32,23 @@ output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = "aws eks --region ap-northeast-1 update-kubeconfig --name ${module.eks.cluster_name}"
 }
+
+output "route53_zone_id" {
+  description = "Route53 hosted zone ID"
+  value       = aws_route53_zone.main.zone_id
+}
+
+output "route53_name_servers" {
+  description = "Route53 name servers"
+  value       = aws_route53_zone.main.name_servers
+}
+
+output "acm_certificate_arn" {
+  description = "ACM certificate ARN"
+  value       = aws_acm_certificate.main.arn
+}
+
+output "domain_name" {
+  description = "Domain name"
+  value       = aws_route53_zone.main.name
+}

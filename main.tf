@@ -87,7 +87,7 @@ module "eks" {
     main = {
       name = "main"
       
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.small"]
       
       min_size     = 1
       max_size     = 3
@@ -162,6 +162,36 @@ resource "helm_release" "external_dns" {
     value = "ap-northeast-1"
   }
 
+  # 도메인 필터링 (보안상 중요!)
+  set {
+    name  = "domainFilters[0]"
+    value = "bluesuunywings.com"
+  }
+
+  # 정책 설정 (upsert-only 권장)
+  set {
+    name  = "policy"
+    value = "upsert-only"
+  }
+
+  # 레지스트리 설정 (중복 방지)
+  set {
+    name  = "registry"
+    value = "txt"
+  }
+
+  # 로그 레벨 설정
+  set {
+    name  = "logLevel"
+    value = "info"
+  }
+
+  # 동기화 간격
+  set {
+    name  = "interval"
+    value = "1m"
+  }
+
   set {
     name  = "serviceAccount.create"
     value = "false"
@@ -173,6 +203,7 @@ resource "helm_release" "external_dns" {
   }
 
   depends_on = [
-    kubernetes_service_account.external_dns
+    kubernetes_service_account.external_dns,
+    aws_route53_zone.main
   ]
 }
