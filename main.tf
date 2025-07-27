@@ -172,6 +172,118 @@ resource "helm_release" "external_dns" {
     value = "external-dns"
   }
 
+  # External DNS 소스 설정
+  set {
+    name  = "sources[0]"
+    value = "service"
+  }
+
+  set {
+    name  = "sources[1]"
+    value = "ingress"
+  }
+
+  # 도메인 필터 설정
+  set {
+    name  = "domainFilters[0]"
+    value = local.domain_name
+  }
+
+  # AWS 설정
+  set {
+    name  = "aws.zoneType"
+    value = "public"
+  }
+
+  # 정책 설정
+  set {
+    name  = "policy"
+    value = "upsert-only"
+  }
+
+  # 레지스트리 설정
+  set {
+    name  = "registry"
+    value = "txt"
+  }
+
+  # TXT 소유자 ID 설정
+  set {
+    name  = "txtOwnerId"
+    value = local.hosted_zone_id
+  }
+
+  # 로그 레벨 설정
+  set {
+    name  = "logLevel"
+    value = "info"
+  }
+
+  # 동기화 간격 설정
+  set {
+    name  = "interval"
+    value = "1m"
+  }
+
+  # 리소스 요청 및 제한 설정
+  set {
+    name  = "resources.requests.cpu"
+    value = "10m"
+  }
+
+  set {
+    name  = "resources.requests.memory"
+    value = "50Mi"
+  }
+
+  set {
+    name  = "resources.limits.cpu"
+    value = "50m"
+  }
+
+  set {
+    name  = "resources.limits.memory"
+    value = "100Mi"
+  }
+
+  # 보안 컨텍스트 설정
+  set {
+    name  = "securityContext.runAsNonRoot"
+    value = "true"
+  }
+
+  set {
+    name  = "securityContext.runAsUser"
+    value = "65534"
+  }
+
+  set {
+    name  = "securityContext.fsGroup"
+    value = "65534"
+  }
+
+  # 노드 선택기 (시스템 노드에서 실행)
+  set {
+    name  = "nodeSelector.kubernetes\.io/os"
+    value = "linux"
+  }
+
+  # 톨러런스 설정
+  set {
+    name  = "tolerations[0].key"
+    value = "node-role.kubernetes.io/master"
+  }
+
+  set {
+    name  = "tolerations[0].operator"
+    value = "Equal"
+  }
+
+  set {
+    name  = "tolerations[0].effect"
+    value = "NoSchedule"
+  }
+
   depends_on = [
     kubernetes_service_account.external_dns
   ]
