@@ -1,7 +1,9 @@
 # AWS EKS Terraform 자동 배포
 
 
+
 AWS 도쿄 리전에 Production-ready EKS 클러스터를 Terraform으로 자동 배포
+
 
 
 ## 파일 구조
@@ -16,33 +18,24 @@ eks-terraform/
 ├── policies/                  # IAM 정책 파일들
 └── README.md                
 ```
-**목표**
-
-✅ **완전한 Kubernetes 클러스터** (EKS)  
-✅ **자동 로드밸런싱** (AWS Load Balancer Controller)  
-✅ **자동 스토리지 관리** (EBS CSI Driver)  
-✅ **자동 DNS 관리** (External DNS + Route53)  
-✅ **SSL 인증서** (ACM)  
-✅ **테스트 웹 애플리케이션**  
-
 ## 구성 요소
 
-### 🌐 네트워킹
+### 네트워킹
 - **VPC**: 10.0.0.0/16 (3개 가용영역)
 - **프라이빗 서브넷**: 컴퓨터들이 안전하게 작업하는 공간
 - **퍼블릭 서브넷**: 인터넷과 연결되는 공간
 - **NAT Gateway**: 보안 인터넷 연결
 
-### 💻 컴퓨팅
+### 컴퓨팅
 - **EKS 클러스터**: `devsecops-eks` (Kubernetes 1.28)
 - **노드 그룹**: t3.small 인스턴스 1-3대 (자동 확장)
 
-### 🛠️ 자동화 도구
+### 자동화 도구
 - **Load Balancer Controller**: 트래픽 자동 분산
 - **EBS CSI Driver**: 디스크 자동 연결
 - **External DNS**: 도메인 자동 관리
 
-### 1️⃣ 사전 준비
+### 1. 사전 준비
 
 ```bash
 # 필수 도구 설치 확인
@@ -56,7 +49,7 @@ kubectl version --client  # kubectl
 - [Terraform 설치](https://developer.hashicorp.com/terraform/downloads)
 - [kubectl 설치](https://kubernetes.io/docs/tasks/tools/)
 
-### 2️⃣ AWS 계정 설정
+### 2. AWS 계정 설정
 
 ```bash
 # AWS 자격증명 설정
@@ -69,7 +62,7 @@ aws configure
 - **Region**: `ap-northeast-1` (도쿄)
 - **Output format**: `json`
 
-### 3️⃣ 프로젝트 다운로드
+### 3. 프로젝트 다운로드
 
 ```bash
 # 이 저장소 복제
@@ -77,7 +70,7 @@ git clone <이-저장소-URL>
 cd eks-terraform
 ```
 
-### 4️⃣ 배포 실행
+### 4. 배포 실행
 
 ```bash
 # 1. Terraform 초기화 (도구 다운로드)
@@ -92,7 +85,7 @@ terraform apply
 
 **`yes` 입력하면 배포 시작!**
 
-### 5️⃣ 클러스터 연결
+### 5. 클러스터 연결
 
 ```bash
 # kubectl을 EKS 클러스터에 연결
@@ -143,10 +136,10 @@ kubectl get pods -A
 kubectl get svc -A
 ```
 
-## 🔧 커스터마이징
+## 커스터마이징
 
 ### 도메인 변경
-`main.tf`와 `route53-acm.tf`에서 `bluesuunywings.com`을 본인 도메인으로 변경:
+`main.tf`와 `route53-acm.tf`에서 `bluesunnywings.com`을 본인 도메인으로 변경:
 
 ```hcl
 # main.tf
@@ -175,19 +168,9 @@ max_size     = 5  # 최대 개수
 desired_size = 3  # 희망 개수
 ```
 
-## 비용 정보
+> **중요**: 테스트 후 반드시 리소스를 정리하세요!
 
-**예상 월 비용 (도쿄 리전):**
-- EKS 클러스터: ~$73
-- EC2 인스턴스 (t3.small × 2): ~$30
-- NAT Gateway: ~$45
-- 기타 (로드밸런서, 스토리지): ~$20
-
-**총 예상 비용: ~$170/월**
-
-> ⚠️ **중요**: 테스트 후 반드시 리소스를 정리하세요!
-
-## 🗑️ 리소스 정리
+## 리소스 정리
 
 ```bash
 # 테스트 앱 삭제
@@ -198,6 +181,7 @@ terraform destroy
 ```
 
 `yes` 입력하면 모든 리소스가 삭제됩니다. (약 10-15분 소요)
+
 
 
 ### 자주 발생하는 문제

@@ -127,6 +127,13 @@ resource "aws_iam_policy" "external_dns" {
           "route53:ListTagsForResource"
         ]
         Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:GetChange"
+        ]
+        Resource = "arn:aws:route53:::change/*"
       }
     ]
   })

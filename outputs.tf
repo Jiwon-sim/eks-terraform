@@ -1,3 +1,4 @@
+# EKS 클러스터 정보
 output "cluster_endpoint" {
   description = "Endpoint for EKS control plane"
   value       = module.eks.cluster_endpoint
@@ -13,34 +14,25 @@ output "cluster_name" {
   value       = module.eks.cluster_name
 }
 
-output "cluster_arn" {
-  description = "The Amazon Resource Name (ARN) of the cluster"
-  value       = module.eks.cluster_arn
+# Route53 정보
+output "route53_zone_id" {
+  description = "Route53 Hosted Zone ID for External DNS"
+  value       = aws_route53_zone.main.zone_id
 }
 
-output "cluster_certificate_authority_data" {
-  description = "Base64 encoded certificate data required to communicate with the cluster"
-  value       = module.eks.cluster_certificate_authority_data
+output "route53_zone_name" {
+  description = "Route53 Hosted Zone Name"
+  value       = aws_route53_zone.main.name
 }
 
-output "oidc_provider_arn" {
-  description = "The ARN of the OIDC Provider if enabled"
-  value       = module.eks.oidc_provider_arn
+output "route53_name_servers" {
+  description = "Route53 Name Servers (도메인 등록업체에서 설정 필요)"
+  value       = aws_route53_zone.main.name_servers
 }
 
 output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = "aws eks --region ap-northeast-1 update-kubeconfig --name ${module.eks.cluster_name}"
-}
-
-output "route53_zone_id" {
-  description = "Route53 hosted zone ID"
-  value       = aws_route53_zone.main.zone_id
-}
-
-output "route53_name_servers" {
-  description = "Route53 name servers"
-  value       = aws_route53_zone.main.name_servers
 }
 
 output "acm_certificate_arn" {
