@@ -87,7 +87,7 @@ module "eks" {
     main = {
       name = "main"
       
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.medium"]
       
       min_size     = 1
       max_size     = 3
