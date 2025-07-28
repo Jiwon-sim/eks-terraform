@@ -30,23 +30,17 @@ output "route53_name_servers" {
   value       = aws_route53_zone.main.name_servers
 }
 
-# External DNS 정보
-output "external_dns_service_account_arn" {
-  description = "External DNS Service Account ARN"
-  value       = kubernetes_service_account.external_dns.metadata[0].annotations["eks.amazonaws.com/role-arn"]
+output "configure_kubectl" {
+  description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
+  value       = "aws eks --region ap-northeast-1 update-kubeconfig --name ${module.eks.cluster_name}"
 }
 
-output "external_dns_iam_role_arn" {
-  description = "External DNS IAM Role ARN"
-  value       = aws_iam_role.external_dns.arn
+output "acm_certificate_arn" {
+  description = "ACM certificate ARN"
+  value       = aws_acm_certificate.main.arn
 }
 
-# 설정 확인용 정보
-output "domain_configuration" {
-  description = "External DNS 도메인 설정 정보"
-  value = {
-    domain_name    = local.domain_name
-    hosted_zone_id = local.hosted_zone_id
-    txt_owner_id   = local.hosted_zone_id
-  }
+output "domain_name" {
+  description = "Domain name"
+  value       = aws_route53_zone.main.name
 }
