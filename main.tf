@@ -165,7 +165,7 @@ resource "helm_release" "external_dns" {
   # 도메인 필터링 (보안상 중요!)
   set {
     name  = "domainFilters[0]"
-    value = "bluesuunywings.com"
+    value = "bluesunnywings.com"
   }
 
   # 정책 설정 (upsert-only 권장)

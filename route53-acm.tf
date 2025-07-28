@@ -1,16 +1,16 @@
 # Route53 Hosted Zone
 resource "aws_route53_zone" "main" {
-  name = "bluesuunywings.com"
+  name = "bluesunnywings.com"
   
   tags = {
-    Name = "bluesuunywings-zone"
+    Name = "bluesunnywings-zone"
   }
 }
 
 # ACM 인증서 생성
 resource "aws_acm_certificate" "main" {
-  domain_name               = "bluesuunywings.com"
-  subject_alternative_names = ["*.bluesuunywings.com"]
+  domain_name               = "bluesunnywings.com"
+  subject_alternative_names = ["*.bluesunnywings.com"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -18,7 +18,7 @@ resource "aws_acm_certificate" "main" {
   }
 
   tags = {
-    Name = "bluesuunywings-cert"
+    Name = "bluesunnywings-cert"
   }
 }
 
