@@ -264,7 +264,7 @@ resource "helm_release" "external_dns" {
 
   # 노드 선택기 (시스템 노드에서 실행)
   set {
-    name  = "nodeSelector.kubernetes\.io/os"
+    name  = "nodeSelector.kubernetes\\.io/os"
     value = "linux"
   }
 
