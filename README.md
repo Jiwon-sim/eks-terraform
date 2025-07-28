@@ -14,7 +14,7 @@ eks-terraform/
 ├── iam.tf                     # 권한 관리
 ├── route53-acm.tf             # 도메인 & SSL 인증서
 ├── outputs.tf                 # 결과 출력
-├── test-app.yaml              # 테스트 애플리케이션
+├── test-external-dns.yaml     # External DNS 테스트 애플리케이션
 ├── policies/                  # IAM 정책 파일들
 └── README.md                
 ```
@@ -105,12 +105,13 @@ ip-10-0-2-xxx.ap-northeast-1.compute.internal     Ready    <none>   5m    v1.28.
 ## 🧪 테스트 애플리케이션 배포
 
 ```bash
-# 샘플 웹 애플리케이션 배포
-kubectl apply -f test-app.yaml
+# External DNS 테스트 애플리케이션 배포
+kubectl apply -f test-external-dns.yaml
 
 # 배포 상태 확인
 kubectl get pods
 kubectl get ingress
+kubectl get svc
 ```
 
 ## 배포 결과 확인
@@ -174,7 +175,7 @@ desired_size = 3  # 희망 개수
 
 ```bash
 # 테스트 앱 삭제
-kubectl delete -f test-app.yaml
+kubectl delete -f test-external-dns.yaml
 
 # 모든 AWS 리소스 삭제
 terraform destroy

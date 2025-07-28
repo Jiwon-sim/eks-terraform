@@ -5,7 +5,7 @@
 ### External DNS란?
 - **목적**: Kubernetes Ingress/Service에서 자동으로 DNS 레코드를 생성/관리
 - **동작 방식**: Ingress의 `host` 필드를 보고 Route53에 A/CNAME 레코드 자동 생성
-- **실제 사용**: `app.bluesuunywings.com` → ALB 주소로 자동 매핑
+- **실제 사용**: `app.bluesunnywings.com` → ALB 주소로 자동 매핑
 
 ### ACM(AWS Certificate Manager)이란?
 - **목적**: SSL/TLS 인증서 자동 발급 및 갱신
