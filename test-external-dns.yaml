@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: nginx-test
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: nginx.bluesunnywings.com
+    external-dns.alpha.kubernetes.io/hostname: bluesunnywings.com
 spec:
   type: LoadBalancer
   ports:
@@ -45,10 +45,10 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: external-dns-test
-    external-dns.alpha.kubernetes.io/hostname: app.bluesunnywings.com
+    external-dns.alpha.kubernetes.io/hostname: bluesunnywings.com
 spec:
   rules:
-  - host: app.bluesunnywings.com
+  - host: bluesunnywings.com
     http:
       paths:
       - path: /

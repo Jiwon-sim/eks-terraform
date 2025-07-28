@@ -217,6 +217,6 @@ resource "helm_release" "external_dns" {
 
   depends_on = [
     kubernetes_service_account.external_dns,
-    aws_route53_zone.main
+    data.aws_route53_zone.main
   ]
 }
