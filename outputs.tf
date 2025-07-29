@@ -30,17 +30,29 @@ output "route53_name_servers" {
   value       = data.aws_route53_zone.main.name_servers
 }
 
+# kubectl 설정 명령어 (리전 수정!)
 output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
-  value       = "aws eks --region ap-northeast-2 update-kubeconfig --name ${module.eks.cluster_name}"
+  value       = "aws eks --region ap-northeast-1 update-kubeconfig --name ${module.eks.cluster_name}"
 }
 
+# ACM 인증서 정보 (서울 리전 인증서 참조)
 output "acm_certificate_arn" {
-  description = "ACM certificate ARN"
-  value       = aws_acm_certificate.main.arn
+  description = "ACM certificate ARN (Seoul region)"
+  value       = data.aws_acm_certificate.main.arn
 }
 
 output "domain_name" {
   description = "Domain name"
-  value       = data.aws_route53_zone.main.name
+  value       = "bluesunnywings.com"
+}
+
+# ALB 정보 추가
+output "ingress_info" {
+  description = "Instructions for accessing the application"
+  value = {
+    http_url  = "http://nginx.bluesunnywings.com"
+    https_url = "https://nginx.bluesunnywings.com"
+    note      = "DNS propagation may take a few minutes after deployment"
+  }
 }

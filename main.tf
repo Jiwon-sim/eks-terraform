@@ -16,8 +16,15 @@ terraform {
   }
 }
 
+# 도쿄 리전 (메인)
 provider "aws" {
   region = "ap-northeast-1"
+}
+
+# 서울 리전 (ACM 인증서용)
+provider "aws" {
+  alias  = "seoul"
+  region = "ap-northeast-2"
 }
 
 provider "kubernetes" {
@@ -162,19 +169,19 @@ resource "helm_release" "external_dns" {
     value = "ap-northeast-1"
   }
 
-  # 도메인 필터링 (보안상 중요!)
+  # 도메인 필터링
   set {
     name  = "domainFilters[0]"
     value = "bluesunnywings.com"
   }
 
-  # 정책 설정 (upsert-only 권장)
+  # 정책 설정
   set {
     name  = "policy"
     value = "upsert-only"
   }
 
-  # 레지스트리 설정 (중복 방지)
+  # 레지스트리 설정
   set {
     name  = "registry"
     value = "txt"
@@ -213,10 +220,7 @@ resource "helm_release" "external_dns" {
     value = "ingress"
   }
 
-
-
   depends_on = [
-    kubernetes_service_account.external_dns,
-    data.aws_route53_zone.main
+    kubernetes_service_account.external_dns
   ]
 }
