@@ -53,19 +53,17 @@ ExternalDNS는 Kubernetes 리소스를 기반으로 Route53 DNS 레코드를 자
 
 ---
 
-## File Structure
-
+## 📂 File Structure
 
 eks-terraform/
-├── main.tf # VPC, EKS 클러스터 및 Helm 차트 설정
-├── iam.tf # OIDC 기반 IRSA IAM Role 구성
-├── route53.tf # Route53 Hosted Zone 및 ACM 참조
-├── outputs.tf # Terraform 출력 값
-├── deploy-and-test.sh # 인프라 배포 및 kubeconfig 설정
-├── check-external-dns.sh # ExternalDNS 상태 확인
-├── test-external-dns.yaml # HTTPS 테스트용 Nginx 애플리케이션
-└── policies/ # IAM Policy 정의
-
+├── main.tf                 # VPC, EKS 클러스터 및 Helm(LBC, EBS, ExternalDNS) 설정
+├── iam.tf                  # OIDC 기반 IRSA(IAM Roles for Service Accounts) 구성
+├── route53.tf              # 서울 리전(ap-northeast-2)의 기존 Route53 & ACM 참조
+├── outputs.tf              # 클러스터 정보 및 접속 명령어 출력
+├── deploy-and-test.sh      # 인프라 배포 및 kubeconfig 자동 설정 스크립트
+├── check-external-dns.sh   # ExternalDNS 배포 상태 및 로그 확인 유틸리티
+├── test-external-dns.yaml  # HTTPS/도메인 연동 테스트용 Nginx 앱
+└── policies/               # AWS Load Balancer Controller 등 IAM 정책 파일
 
 ---
 
