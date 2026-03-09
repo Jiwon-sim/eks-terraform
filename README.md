@@ -54,7 +54,7 @@ ExternalDNS는 Kubernetes 리소스를 기반으로 Route53 DNS 레코드를 자
 ---
 
 📂 File Structure
-Plaintext
+```
 eks-terraform/
 ├── main.tf                 # VPC, EKS 클러스터 및 Helm(LBC, EBS, ExternalDNS) 설정
 ├── iam.tf                  # OIDC 기반 IRSA(IAM Roles for Service Accounts) 구성
@@ -64,9 +64,8 @@ eks-terraform/
 ├── check-external-dns.sh   # ExternalDNS 배포 상태 및 로그 확인 유틸리티
 ├── test-external-dns.yaml  # HTTPS/도메인 연동 테스트용 Nginx 앱
 └── policies/               # AWS Load Balancer Controller 등 IAM 정책 파일
-
+```
 ---
-
 # Infrastructure 구성
 
 ## Networking
@@ -165,7 +164,7 @@ kubectl apply -f test-external-dns.yaml
 
 다음 주소로 접속하여 도메인 및 HTTPS 적용 여부를 확인합니다.
 
-'''bash
+```bash
 https://nginx.bluesunnywings.com
 
 ---
@@ -174,6 +173,6 @@ https://nginx.bluesunnywings.com
 
 실습 후 AWS 비용 발생 방지를 위해 생성된 리소스를 반드시 삭제합니다.
 
-'''bash
+```bash
 terraform destroy
 
