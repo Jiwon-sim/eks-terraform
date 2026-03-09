@@ -55,7 +55,6 @@ ExternalDNS는 Kubernetes 리소스를 기반으로 Route53 DNS 레코드를 자
 
 # File Structure
 
-```bash
 eks-terraform/
 ├── main.tf # VPC, EKS 클러스터 및 Helm 차트 설정
 ├── iam.tf # OIDC 기반 IRSA IAM Role 구성
