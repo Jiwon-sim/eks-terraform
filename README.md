@@ -53,7 +53,7 @@ ExternalDNS는 Kubernetes 리소스를 기반으로 Route53 DNS 레코드를 자
 
 ---
 
-📂 File Structure
+## 📂 파일 구조
 ```
 eks-terraform/
 ├── main.tf                 # VPC, EKS 클러스터 및 Helm(LBC, EBS, ExternalDNS) 설정
@@ -135,6 +135,7 @@ eks-terraform/
 ```bash
 chmod +x *.sh
 ./deploy-and-test.sh
+```
 
 Terraform을 통해 다음 리소스가 생성됩니다.
 
@@ -152,12 +153,12 @@ Terraform을 통해 다음 리소스가 생성됩니다.
 
 ```bash
 kubectl apply -f test-external-dns.yaml
-
+```
 ### ExternalDNS 상태 확인
 
 ```bash
 ./check-external-dns.sh
-
+```
 ---
 
 ## 4. 결과 확인
@@ -166,7 +167,7 @@ kubectl apply -f test-external-dns.yaml
 
 ```bash
 https://nginx.bluesunnywings.com
-
+```
 ---
 
 ## 주의 사항
@@ -175,4 +176,4 @@ https://nginx.bluesunnywings.com
 
 ```bash
 terraform destroy
-
+```
