@@ -1,224 +1,180 @@
-# AWS EKS Terraform 자동 배포
+# AWS EKS Terraform 인프라 구축
 
-
-
-AWS 도쿄 리전에 Production-ready EKS 클러스터를 Terraform으로 자동 배포
-
-
-
-## 파일 구조
-
-```
-eks-terraform/
-├── main.tf                    # 메인 인프라 설정
-├── iam.tf                     # 권한 관리
-├── route53-acm.tf             # 도메인 & SSL 인증서
-├── outputs.tf                 # 결과 출력
-├── test-external-dns.yaml     # External DNS 테스트 애플리케이션
-├── policies/                  # IAM 정책 파일들
-└── README.md                
-```
-## 구성 요소
-
-### 네트워킹
-- **VPC**: 10.0.0.0/16 (3개 가용영역)
-- **프라이빗 서브넷**: 컴퓨터들이 안전하게 작업하는 공간
-- **퍼블릭 서브넷**: 인터넷과 연결되는 공간
-- **NAT Gateway**: 보안 인터넷 연결
-
-### 컴퓨팅
-- **EKS 클러스터**: `devsecops-eks` (Kubernetes 1.28)
-- **노드 그룹**: t3.small 인스턴스 1-3대 (자동 확장)
-
-### 자동화 도구
-- **Load Balancer Controller**: 트래픽 자동 분산
-- **EBS CSI Driver**: 디스크 자동 연결
-- **External DNS**: 도메인 자동 관리
-
-### 1. 사전 준비
-
-```bash
-# 필수 도구 설치 확인
-aws --version     # AWS CLI
-terraform --version  # Terraform
-kubectl version --client  # kubectl
-```
-
-**설치가 필요하다면:**
-- [AWS CLI 설치](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- [Terraform 설치](https://developer.hashicorp.com/terraform/downloads)
-- [kubectl 설치](https://kubernetes.io/docs/tasks/tools/)
-
-### 2. AWS 계정 설정
-
-```bash
-# AWS 자격증명 설정
-aws configure
-```
-
-입력 정보:
-- **Access Key ID**: AWS 콘솔에서 발급
-- **Secret Access Key**: AWS 콘솔에서 발급
-- **Region**: `ap-northeast-1` (도쿄)
-- **Output format**: `json`
-
-### 3. 프로젝트 다운로드
-
-```bash
-# 이 저장소 복제
-git clone <이-저장소-URL>
-cd eks-terraform
-```
-
-### 4. 배포 실행
-
-```bash
-# 1. Terraform 초기화 (도구 다운로드)
-terraform init
-
-# 2. 배포 계획 확인 (뭐가 만들어질지 미리보기)
-terraform plan
-
-# 3. 실제 배포 (약 15-20분 소요)
-terraform apply
-```
-
-**`yes` 입력하면 배포 시작!**
-
-### 5. 클러스터 연결
-
-```bash
-# kubectl을 EKS 클러스터에 연결
-aws eks --region ap-northeast-1 update-kubeconfig --name devsecops-eks
-
-# 연결 확인
-kubectl get nodes
-```
-
-성공하면 이런 화면이 나옵니다:
-```
-NAME                                               STATUS   ROLES    AGE   VERSION
-ip-10-0-1-xxx.ap-northeast-1.compute.internal     Ready    <none>   5m    v1.28.x
-ip-10-0-2-xxx.ap-northeast-1.compute.internal     Ready    <none>   5m    v1.28.x
-```
-
-## 🧪 테스트 애플리케이션 배포
-
-```bash
-# External DNS 테스트 애플리케이션 배포
-kubectl apply -f test-external-dns.yaml
-
-# 배포 상태 확인
-kubectl get pods
-kubectl get ingress
-kubectl get svc
-```
-
-## 배포 결과 확인
-
-### 생성된 리소스 확인
-```bash
-# Terraform으로 생성된 리소스 목록
-terraform state list
-
-# 주요 정보 출력
-terraform output
-```
-
-### Kubernetes 클러스터 상태
-```bash
-# 노드 상태
-kubectl get nodes -o wide
-
-# 모든 파드 상태
-kubectl get pods -A
-
-# 서비스 상태
-kubectl get svc -A
-```
-
-## 커스터마이징
-
-### 도메인 변경
-`main.tf`와 `route53-acm.tf`에서 `bluesunnywings.com`을 본인 도메인으로 변경:
-
-```hcl
-# main.tf
-set {
-  name  = "domainFilters[0]"
-  value = "your-domain.com"  # 여기 변경
-}
-
-# route53-acm.tf
-resource "aws_route53_zone" "main" {
-  name = "your-domain.com"  # 여기 변경
-}
-```
-
-### 인스턴스 크기 변경
-`main.tf`에서 인스턴스 타입 수정:
-
-```hcl
-instance_types = ["t3.medium"]  # t3.small → t3.medium
-```
-
-### 노드 개수 조정
-```hcl
-min_size     = 2  # 최소 개수
-max_size     = 5  # 최대 개수
-desired_size = 3  # 희망 개수
-```
-
-> **중요**: 테스트 후 반드시 리소스를 정리하세요!
-
-## 리소스 정리
-
-```bash
-# 테스트 앱 삭제
-kubectl delete -f test-external-dns.yaml
-
-# 모든 AWS 리소스 삭제
-terraform destroy
-```
-
-`yes` 입력하면 모든 리소스가 삭제됩니다. (약 10-15분 소요)
-
-
-
-### 자주 발생하는 문제
-
-**1. AWS 권한 오류**
-```bash
-# IAM 사용자에게 다음 권한 필요:
-# - AmazonEKSClusterPolicy
-# - AmazonEKSWorkerNodePolicy
-# - AmazonEC2FullAccess
-# - AmazonRoute53FullAccess
-```
-
-**2. 도메인 검증 실패**
-```bash
-# Route53에서 네임서버 확인
-terraform output route53_name_servers
-# 도메인 등록업체에서 네임서버 변경 필요
-```
-
-**3. kubectl 연결 실패**
-```bash
-# AWS CLI 프로필 확인
-aws sts get-caller-identity
-
-# kubeconfig 재설정
-aws eks --region ap-northeast-1 update-kubeconfig --name devsecops-eks
-```
-
-### 로그 확인
-```bash
-# Terraform 상세 로그
-TF_LOG=DEBUG terraform apply
-
-# Kubernetes 파드 로그
-kubectl logs -n kube-system -l app.kubernetes.io/name=external-dns
-```
+Terraform(IaC)을 활용하여 AWS 도쿄 리전(ap-northeast-1)에 EKS 클러스터를 구축하고  
+서울 리전(ap-northeast-2)의 Route53 및 ACM 자원을 연동하여 **도메인 및 HTTPS 구성을 자동화한 실습 프로젝트**입니다.
 
 ---
+
+# Tech Stack
+
+## Cloud
+- AWS VPC
+- AWS EKS
+- AWS Route53
+- AWS ACM
+- AWS Application Load Balancer
+- NAT Gateway
+
+## Infrastructure as Code
+- Terraform
+
+## Container / Orchestration
+- Docker
+- Kubernetes (EKS)
+
+## Automation / Add-ons
+- Helm
+- ExternalDNS
+- AWS Load Balancer Controller
+- EBS CSI Driver
+
+---
+
+# 주요 구현 내용
+
+- Terraform을 이용한 **AWS EKS 인프라 자동화 구축**
+- **VPC 네트워크 구성 (Public / Private Subnet 분리)**
+- **IRSA(OIDC)** 기반 Kubernetes 서비스 계정 IAM 권한 관리
+- Helm을 이용한 **AWS Load Balancer Controller 배포**
+- **ExternalDNS + Route53 연동을 통한 DNS 자동 등록**
+- **ACM 인증서를 활용한 HTTPS 트래픽 구성**
+- Kubernetes Ingress 기반 **ALB 자동 생성 및 트래픽 라우팅**
+
+---
+
+# Architecture
+
+![architecture](./architecture.png)
+
+사용자가 HTTPS로 접속하면 Route53을 통해 ALB로 트래픽이 전달되고  
+ALB는 Private Subnet에 위치한 EKS Worker Node로 요청을 전달합니다.
+
+ExternalDNS는 Kubernetes 리소스를 기반으로 Route53 DNS 레코드를 자동으로 생성 및 관리합니다.
+
+---
+
+# File Structure
+
+```bash
+eks-terraform/
+├── main.tf # VPC, EKS 클러스터 및 Helm 차트 설정
+├── iam.tf # OIDC 기반 IRSA IAM Role 구성
+├── route53.tf # Route53 Hosted Zone 및 ACM 참조
+├── outputs.tf # Terraform 출력 값
+├── deploy-and-test.sh # 인프라 배포 및 kubeconfig 설정
+├── check-external-dns.sh # ExternalDNS 상태 확인
+├── test-external-dns.yaml # HTTPS 테스트용 Nginx 애플리케이션
+└── policies/ # IAM Policy 정의
+
+---
+
+# Infrastructure 구성
+
+## Networking
+
+- **VPC CIDR** : 10.0.0.0/16
+- **3개의 가용 영역(AZ) 사용**
+
+### Public Subnet
+- Application Load Balancer
+- NAT Gateway
+
+### Private Subnet
+- EKS Worker Node 배치
+- 외부 직접 접근 차단
+
+### NAT Gateway
+- Private Subnet Node의 인터넷 아웃바운드 트래픽 지원
+
+---
+
+## Computing
+
+### EKS Cluster
+
+- Kubernetes Version : 1.28
+- Cluster Name : devsecops-eks
+
+### Node Group
+
+- Instance Type : t3.small
+- Auto Scaling : 1 ~ 3 nodes
+
+---
+
+# Kubernetes Add-ons
+
+## AWS Load Balancer Controller
+
+- Kubernetes Ingress 리소스를 기반으로
+- AWS Application Load Balancer 자동 생성
+
+## ExternalDNS
+
+- Kubernetes Service / Ingress 기반
+- Route53 레코드 자동 생성 및 업데이트
+
+## EBS CSI Driver
+
+- Kubernetes Persistent Volume 사용을 위한
+- AWS EBS 자동 프로비저닝
+
+---
+
+# 실행 가이드
+
+## 1. 사전 준비
+
+다음 항목을 확인합니다.
+
+- `route53.tf`의 **Hosted Zone ID**
+- `test-external-dns.yaml`의 **ACM Certificate ARN**
+
+---
+
+## 2. 인프라 배포
+
+```bash
+chmod +x *.sh
+./deploy-and-test.sh
+
+Terraform을 통해 다음 리소스가 생성됩니다.
+
+- VPC
+- EKS Cluster
+- Node Group
+- IAM Roles (IRSA)
+- Kubernetes Add-ons
+
+---
+
+## 3. 기능 검증
+
+### 테스트 애플리케이션 배포
+
+```bash
+kubectl apply -f test-external-dns.yaml
+
+### ExternalDNS 상태 확인
+
+```bash
+./check-external-dns.sh
+
+---
+
+## 4. 결과 확인
+
+다음 주소로 접속하여 도메인 및 HTTPS 적용 여부를 확인합니다.
+
+'''bash
+https://nginx.bluesunnywings.com
+
+---
+
+## 주의 사항
+
+실습 후 AWS 비용 발생 방지를 위해 생성된 리소스를 반드시 삭제합니다.
+
+'''bash
+terraform destroy
+
